@@ -506,15 +506,42 @@ Q&A prep (2 min):
 
 ## Open Questions for Next Session
 
-Things we couldn't resolve from docs alone; must validate or fetch in session 1:
+Things we couldn't resolve from docs alone; must validate or fetch in session 1.
 
-1. **Wrapped API base URL on beta** — is it `api.paywithlocus.com` or `beta-api.paywithlocus.com`? (Spike 2)
+### CRITICAL — blocks Spike 1 and Spike 3
+
+**0. BuildWithLocus auth with beta `claw_dev_*` key**
+
+Confirmed during planning probe: `POST https://api.buildwithlocus.com/v1/auth/exchange` with the `claw_dev_LmoR4tRKOKNRF791ewCOycqmeKcAxItC` key returns `{"error":"Invalid API key"}`. Beta also has no `/v1/auth/exchange` route — got HTML 404.
+
+This means the standard Build API auth flow from docs doesn't work for beta keys. Possible resolutions to chase in order:
+1. Fetch and read `https://beta-api.paywithlocus.com/api/skills/skill.md` end-to-end — there's likely a beta-specific auth instruction
+2. Try `Authorization: Bearer $LOCUS_API_KEY` directly against Build API endpoints (skip exchange)
+3. Register a separate production key at `paywithlocus.com` that may share the same wallet
+4. Ask in hackathon Discord — this is likely a known issue
+
+**Until this is resolved, BuildWithLocus calls cannot be made.** No deploys, no spike 3, no demo. Resolve this FIRST before anything else.
+
+### Lower priority
+
+1. **Wrapped API base URL on beta** — Spike 2 confirms whether to use `api.paywithlocus.com` or `beta-api.paywithlocus.com`
 2. **Tasks API exact endpoint shape** — pull from `beta-api.paywithlocus.com/api/skills/skill.md` in session 1
-3. **Wallet balance endpoint** — is it `/api/pay/balance`, `/v1/billing/balance`, or both? Confirm whether it's workspace credit or USDC wallet (different numbers)
+3. ✅ **Wallet balance endpoint** — confirmed: `GET https://beta-api.paywithlocus.com/api/pay/balance` with API key Bearer auth. Returns `{wallet_address, workspace_id, usdc_balance, promo_credit_balance, allowance, max_transaction_size}`. Welcome promo of $5 already on the wallet.
 4. **Per-service env var patching** — can we mutate env vars on an existing service and trigger redeploy, or do we need to recreate? (affects how we toggle fiscal stages at deploy-layer vs runtime-layer)
 5. **GHCR pull from Locus** — does Locus pull public GHCR images cleanly, or do we need to push to a specific registry? (affects Spike 3 setup)
-6. **Redis addon provisioning time** — docs say 10-20s; confirm on real run
+6. ~~Redis addon provisioning time~~ — N/A, dropped Redis from architecture
 7. **Does `from-repo` work if we don't have a `.locusbuild` file yet?** — we may want to start with direct `POST /v1/services` instead
+8. **Tasks API per-call cost** — undisclosed in docs; spike a single tier-1 submission and observe wallet delta
+
+## Gift Code Approval Tracking
+
+Three signals to watch:
+
+1. **Email to fuadsanin2665@gmail.com** — Locus team sends redemption code on approval (most reliable)
+2. **Wallet balance polling** — run `bash scripts/check_balance.sh`; `promo_credit_balance` jumps from `"5"` → `"~10"` when grant lands
+3. **No status API exists** — verified during planning: GET on `/api/gift-code-requests/{id}` and `/api/gift-code-requests` both return 404
+
+Current state (planning close): $5 promo on wallet, awaiting gift code review for ID 52606d86-658f-4442-a7b7-45b60f5ea0fd.
 
 ---
 
