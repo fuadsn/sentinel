@@ -1,21 +1,27 @@
-# Sentinel
+# Mitosis
 
-> Per-tenant Trust & Safety workers with wallet-bounded autonomy, built on Locus.
+> **Recursively self-replicating agents on Locus.**
 
 **Paygentic Hackathon — Week 2 (BuildWithLocus)**
 
-Sentinel gives each merchant on a marketplace platform their own isolated, wallet-capped moderation worker deployed on BuildWithLocus. When a tenant's wallet drops through defined thresholds, only that tenant's pipeline degrades — other tenants keep running at full capacity.
+An agent receives a task. It decides whether to do the task itself, or split into N specialist children — each spawned as its own deployment on BuildWithLocus, each with a portion of the parent's USDC wallet. Children may spawn grandchildren. The tree expands and collapses dynamically, bounded only by the root budget.
 
-Three Locus primitives, one programmable economy:
+`fork()` and `wait()` for the agent economy, with USDC as the only governor of recursion.
 
-- **BuildWithLocus** — per-tenant service deploys
-- **Wrapped APIs** — OpenAI Moderation + GPT-4o-mini vision, Anthropic Claude Haiku reasoning
-- **Locus Tasks** — human reviewer escalation for low-confidence items
+## What Locus uniquely enables
 
-All settled in one wallet, one ledger, one currency.
+Three primitives, one substrate for autonomous decomposition:
 
-See [`PLAN.md`](./PLAN.md) for the full architecture, build sequence, and demo plan.
+- **BuildWithLocus** — agents *can* spawn agents because deployment is an API call
+- **PayWithLocus** — every agent has a real wallet, so fiscal bounding is enforceable
+- **Wrapped APIs** — pay-per-call USDC means costs are knowable at decision time
+
+## Demo task
+
+Series A investment due diligence. Submit a startup name + budget, watch a tree of specialist agents (market, team, tech, financial, competitive) bloom on Locus, each running its own analysis via wrapped APIs, root synthesizing the final memo as agents self-terminate.
+
+See [`PLAN.md`](./PLAN.md) for full architecture, build sequence, demo plan, and risk register.
 
 ## Status
 
-Pre-build — planning complete, execution starts next session.
+Pre-build — planning complete, execution starts in next session.
